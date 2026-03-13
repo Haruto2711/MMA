@@ -25,7 +25,6 @@
       "lastCheckin": "2026-03-09"
     }
   ],
-
   "checkins": [
     {
       "id": 1,
@@ -46,9 +45,18 @@
       "id": 4,
       "userId": 3,
       "timestamp": "2026-03-09"
+    },
+    {
+      "id": "5",
+      "userId": 1,
+      "timestamp": "2026-03-13"
+    },
+    {
+      "id": "6",
+      "userId": 2,
+      "timestamp": "2026-03-13"
     }
   ],
-
   "notifications": [
     {
       "id": 1,
