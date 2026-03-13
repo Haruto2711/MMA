@@ -7,7 +7,7 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import { createCheckin, getLastCheckin } from "../services/checkinService";
+import { createCheckin, getLastCheckin } from "../services/checkInService";
 import { getToday } from "../utils/dateUtils";
 
 const HomeScreen = () => {
