@@ -63,6 +63,11 @@
       "id": "6",
       "userId": 2,
       "timestamp": "2026-03-13"
+    },
+    {
+      "id": "7",
+      "userId": 1,
+      "timestamp": "2026-03-14"
     }
   ],
   "notifications": [
@@ -70,13 +75,60 @@
       "id": "1",
       "userId": 1,
       "type": "warning",
-      "sentAt": "2026-03-11"
+      "message": "You have not checked in today",
+      "sentAt": "2026-03-11",
+      "read": false
     },
     {
       "id": "2",
+<<<<<<< HEAD
+=======
+      "userId": 1,
+      "type": "alert",
+      "message": "No check-in for 3 days",
+      "sentAt": "2026-03-12",
+      "read": false
+    },
+    {
+      "id": "3",
+      "userId": 2,
+      "type": "warning",
+      "message": "Please check in today",
+      "sentAt": "2026-03-13",
+      "read": true
+    },
+    {
+      "id": "4",
+>>>>>>> 21bea9426ad96123d3b715e297a3a65925540d40
       "userId": 3,
       "type": "alert",
-      "sentAt": "2026-03-11"
+      "message": "No check-in detected for 2 days",
+      "sentAt": "2026-03-10",
+      "read": false
+    },
+    {
+      "id": "5",
+      "userId": 3,
+      "type": "warning",
+      "message": "Reminder: please check in today",
+      "sentAt": "2026-03-11",
+      "read": false
+    },
+    {
+      "id": "6",
+      "userId": 2,
+      "type": "info",
+      "message": "Your last check-in was recorded successfully",
+      "sentAt": "2026-03-12",
+      "read": true
+    },
+    {
+      "id": "7",
+      "userId": 1,
+      "type": "warning",
+      "message": "You missed a scheduled check-in",
+      "sentAt": "2026-03-09",
+      "read": true
     }
   ]
 }
