@@ -2,8 +2,9 @@ import { Platform } from "react-native";
 import { getToday } from "../utils/dateUtils";
 
 const API_URL =
-  process.env.EXPO_PUBLIC_API_URL ||
-  (Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000");
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000"
+    : "http://192.168.1.7:3000";
 const CHECKIN_URL = `${API_URL}/checkins`;
 const USERS_URL = `${API_URL}/users`;
 
@@ -30,7 +31,9 @@ export const createCheckin = async (userId) => {
     );
 
     if (todayCheckins.length > 0) {
-      throw new Error("Already checked in today");
+      return {
+  message: "Already checked in today"
+};
     }
 
     const maxNumericId = allCheckins.reduce((maxId, item) => {

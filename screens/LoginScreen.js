@@ -29,6 +29,8 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.container}>
 
       <Text style={styles.title}>Login</Text>
+   
+
 
       <TextInput
         style={styles.input}
@@ -49,6 +51,12 @@ export default function LoginScreen({ navigation }) {
         title={loading ? "Loading..." : "Login"}
         onPress={handleLogin}
       />
+         <Text
+  style={styles.link}
+  onPress={() => navigation.navigate("ForgotPassword")}
+>
+  Forgot password?
+</Text>
 
       <Text
         style={styles.link}
