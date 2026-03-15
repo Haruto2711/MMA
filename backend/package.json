@@ -1,0 +1,13 @@
+{
+  "name": "mma-backend",
+  "version": "1.0.0",
+  "main": "emailServer.js",
+  "scripts": {
+    "start": "node emailServer.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.13",
+    "node-cron": "^3.0.3"
+  }
+}

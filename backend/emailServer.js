@@ -2,8 +2,23 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const cron = require("node-cron");
 const fs = require("fs");
+const path = require("path");
 
 const app = express();
+
+/*
+========================
+PATH TO DB.JSON
+========================
+*/
+
+const dbPath = path.join(__dirname, "../db.json");
+
+/*
+========================
+EMAIL TRANSPORTER
+========================
+*/
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -42,7 +57,7 @@ CHECK ALL USERS
 function checkUsers() {
 
   const db = JSON.parse(
-    fs.readFileSync("../db.json")
+    fs.readFileSync(dbPath, "utf8")
   );
 
   const users = db.users;
@@ -57,6 +72,7 @@ function checkUsers() {
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 
     if (userCheckins.length === 0) {
+      console.log("User never check-in:", user.email);
       return;
     }
 
@@ -66,11 +82,13 @@ function checkUsers() {
       (today - lastCheckin) / (1000 * 60 * 60 * 24)
     );
 
+    console.log("User:", user.email, "Days:", diffDays);
+
     if (diffDays >= user.timeoutDays) {
 
       console.log("User overdue:", user.email);
 
-      await sendEmail(
+      sendEmail(
         user.emergencyEmail,
         diffDays
       );
@@ -86,10 +104,21 @@ CRON JOB
 */
 
 cron.schedule("*/1 * * * *", () => {
+
   console.log("Running check...");
+
   checkUsers();
+
 });
 
-app.listen(4000, () => {
-  console.log("Server running on port 4000");
+/*
+========================
+SERVER START
+========================
+*/
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });

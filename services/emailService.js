@@ -4,7 +4,8 @@ EMAIL SERVER CONFIG
 ====================================
 */
 
-const EMAIL_SERVER_URL = "http://192.168.1.7:4000/send-alert";
+const EMAIL_SERVER_URL =
+"https://mma-api.onrender.com/send-alert";
 
 /*
 ====================================

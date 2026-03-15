@@ -1,10 +1,7 @@
 import { Platform } from "react-native";
 import { getToday } from "../utils/dateUtils";
 
-const API_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000"
-    : "http://192.168.1.7:3000";
+const API_URL = "https://mma-api.onrender.com";
 const CHECKIN_URL = `${API_URL}/checkins`;
 const USERS_URL = `${API_URL}/users`;
 
