@@ -12,7 +12,7 @@ PATH TO DB.JSON
 ========================
 */
 
-const dbPath = path.join(__dirname, "../db.json");
+const dbPath = path.join(__dirname, "db.json");
 
 /*
 ========================
@@ -120,5 +120,5 @@ SERVER START
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+  console.log("Email server running on port", PORT);
 });
