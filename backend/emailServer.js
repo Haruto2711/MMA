@@ -3,7 +3,9 @@ const nodemailer = require("nodemailer");
 const cron = require("node-cron");
 const fs = require("fs");
 
+
 const app = express();
+app.use(express.json()); // Thêm dòng này để parse JSON body cho các request
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -79,11 +81,29 @@ function checkUsers() {
   });
 }
 
+app.post("/send-alert", async (req, res) => {
+  const { toEmail, days } = req.body;
+  if (!toEmail) {
+    return res.status(400).json({ error: "Missing toEmail" });
+  }
+  try {
+    await sendEmail(toEmail, days);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Send email error:", error);
+    res.status(500).json({ error: error.message || "Send email failed" });
+  }
+});
 /*
 ========================
 CRON JOB
 ========================
 */
+
+/* cron.schedule("0 0 * * *", () => {
+  console.log("Running check...");
+  checkUsers();
+}); */
 
 cron.schedule("*/1 * * * *", () => {
   console.log("Running check...");
