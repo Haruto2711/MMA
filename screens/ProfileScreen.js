@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { useAuth } from "../context/AuthContext";
+
 // Giả sử bạn sẽ dùng hàm updateUserProfile từ userService do Thành viết
 // import { updateUserProfile } from '../services/userService'; 
 
@@ -8,6 +10,7 @@ export default function ProfileScreen() {
   const [phone, setPhone] = useState('');
   const [emergencyEmail, setEmergencyEmail] = useState('');
   const [alertDays, setAlertDays] = useState('3');
+const { logout } = useAuth();
 
   const handleSaveProfile = async () => {
     if (!emergencyEmail || !alertDays) {
@@ -47,6 +50,13 @@ export default function ProfileScreen() {
       <TouchableOpacity style={styles.button} onPress={handleSaveProfile}>
         <Text style={styles.buttonText}>Lưu thông tin</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+  style={styles.logoutButton}
+  onPress={logout}
+>
+  <Text style={styles.logoutText}>Logout</Text>
+</TouchableOpacity>
+
     </ScrollView>
   );
 }
@@ -58,4 +68,18 @@ const styles = StyleSheet.create({
   input: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd', padding: 12, borderRadius: 8, marginBottom: 15, fontSize: 16 },
   button: { backgroundColor: '#007bff', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
   buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  logoutButton:{
+  marginTop:30,
+  backgroundColor:"#ff4444",
+  padding:15,
+  borderRadius:8,
+  alignItems:"center"
+},
+
+logoutText:{
+  color:"#fff",
+  fontSize:18,
+  fontWeight:"bold"
+}
+
 });

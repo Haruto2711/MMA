@@ -3,7 +3,7 @@
     {
       "id": "1",
       "email": "test@gmail.com",
-      "password": "123456",
+      "password": "12345",
       "emergencyEmail": "family@gmail.com",
       "timeoutDays": 3,
       "lastCheckin": "2026-03-10"
@@ -31,6 +31,30 @@
       "emergencyEmail": "DangHSHHE187138@fpt.edu.vn",
       "timeoutDays": 3,
       "lastCheckin": null
+    },
+    {
+      "id": "6b80",
+      "email": "huy@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "ngochuyn029@gmail.com",
+      "timeoutDays": 2,
+      "lastCheckin": null
+    },
+    {
+      "id": "1299",
+      "email": "huy1@gmail.com",
+      "password": "12335",
+      "emergencyEmail": "ngochuyn029@gmail.com",
+      "timeoutDays": 2,
+      "lastCheckin": null
+    },
+    {
+      "id": "4b1d",
+      "email": "hu@gmail.com",
+      "password": "12345",
+      "emergencyEmail": "ngochuyn029@gmail.com",
+      "timeoutDays": 0,
+      "lastCheckin": "2026-03-15"
     }
   ],
   "checkins": [
@@ -42,12 +66,12 @@
     {
       "id": "2",
       "userId": 1,
-      "timestamp": "2026-03-11"
+      "timestamp": "2026-03-10"
     },
     {
       "id": "3",
       "userId": 2,
-      "timestamp": "2026-03-12"
+      "timestamp": "2026-03-10"
     },
     {
       "id": "4",
@@ -57,17 +81,47 @@
     {
       "id": "5",
       "userId": 1,
-      "timestamp": "2026-03-13"
+      "timestamp": "2026-03-10"
     },
     {
       "id": "6",
       "userId": 2,
-      "timestamp": "2026-03-13"
+      "timestamp": "2026-03-10"
     },
     {
       "id": "7",
       "userId": 1,
-      "timestamp": "2026-03-14"
+      "timestamp": "2026-03-10"
+    },
+    {
+      "id": "8",
+      "userId": 1,
+      "timestamp": "2026-03-10"
+    },
+    {
+      "id": "9",
+      "userId": 2,
+      "timestamp": "2026-03-10"
+    },
+    {
+      "id": "10",
+      "userId": "6b80",
+      "timestamp": "2026-03-10"
+    },
+    {
+      "id": "11",
+      "userId": 1299,
+      "timestamp": "2026-03-10"
+    },
+    {
+      "id": "12",
+      "userId": "4b1d",
+      "timestamp": "2026-03-10"
+    },
+    {
+      "id": "13",
+      "userId": "4b1d",
+      "timestamp": "2026-03-10"
     }
   ],
   "notifications": [
@@ -81,8 +135,6 @@
     },
     {
       "id": "2",
-<<<<<<< HEAD
-=======
       "userId": 1,
       "type": "alert",
       "message": "No check-in for 3 days",
@@ -99,7 +151,6 @@
     },
     {
       "id": "4",
->>>>>>> 21bea9426ad96123d3b715e297a3a65925540d40
       "userId": 3,
       "type": "alert",
       "message": "No check-in detected for 2 days",
@@ -130,5 +181,6 @@
       "sentAt": "2026-03-09",
       "read": true
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
