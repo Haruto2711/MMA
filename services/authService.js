@@ -1,4 +1,4 @@
-const BASE_URL = "https://mma-api.onrender.com/users";
+const BASE_URL = "https://mma-db.onrender.com/users";
 /*
 ========================
 LOGIN

@@ -1,5 +1,4 @@
-const API_URL =
-"https://mma-api.onrender.com/users";
+const API_URL = "https://mma-db.onrender.com/users";
 
 /*
 ========================

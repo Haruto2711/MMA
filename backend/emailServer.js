@@ -1,23 +1,23 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const cron = require("node-cron");
-const fs = require("fs");
-const path = require("path");
 
 const app = express();
 
+app.use(express.json());
+
 /*
-========================
-PATH TO DB.JSON
-========================
+====================================
+DATABASE API
+====================================
 */
 
-const dbPath = path.join(__dirname, "db.json");
+const API_URL = "https://mma-db.onrender.com";
 
 /*
-========================
+====================================
 EMAIL TRANSPORTER
-========================
+====================================
 */
 
 const transporter = nodemailer.createTransport({
@@ -29,9 +29,9 @@ const transporter = nodemailer.createTransport({
 });
 
 /*
-========================
+====================================
 SEND EMAIL FUNCTION
-========================
+====================================
 */
 
 async function sendEmail(toEmail, days) {
@@ -49,72 +49,120 @@ async function sendEmail(toEmail, days) {
 }
 
 /*
-========================
-CHECK ALL USERS
-========================
+====================================
+API SEND ALERT
+====================================
 */
 
-function checkUsers() {
+app.post("/send-alert", async (req, res) => {
 
-  const db = JSON.parse(
-    fs.readFileSync(dbPath, "utf8")
-  );
+  try {
 
-  const users = db.users;
-  const checkins = db.checkins;
+    const { toEmail, days } = req.body;
 
-  const today = new Date();
-
-  users.forEach(async (user) => {
-
-    const userCheckins = checkins
-      .filter(c => c.userId == user.id)
-      .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-
-    if (userCheckins.length === 0) {
-      console.log("User never check-in:", user.email);
-      return;
+    if (!toEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required"
+      });
     }
 
-    const lastCheckin = new Date(userCheckins[0].timestamp);
+    await sendEmail(toEmail, days);
 
-    const diffDays = Math.floor(
-      (today - lastCheckin) / (1000 * 60 * 60 * 24)
-    );
+    res.json({
+      success: true,
+      message: "Email sent successfully"
+    });
 
-    console.log("User:", user.email, "Days:", diffDays);
+  } catch (error) {
 
-    if (diffDays >= user.timeoutDays) {
+    console.log("Send email error:", error);
 
-      console.log("User overdue:", user.email);
+    res.status(500).json({
+      success: false,
+      message: "Email failed"
+    });
 
-      sendEmail(
-        user.emergencyEmail,
-        diffDays
+  }
+
+});
+
+/*
+====================================
+CHECK USERS TIMEOUT
+====================================
+*/
+
+async function checkUsers() {
+
+  try {
+
+    const usersRes = await fetch(`${API_URL}/users`);
+    const checkinsRes = await fetch(`${API_URL}/checkins`);
+
+    const users = await usersRes.json();
+    const checkins = await checkinsRes.json();
+
+    const today = new Date();
+
+    for (const user of users) {
+
+      const userCheckins = checkins
+        .filter(c => c.userId == user.id)
+        .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+
+      if (userCheckins.length === 0) {
+        console.log("User never checked in:", user.email);
+        continue;
+      }
+
+      const lastCheckin = new Date(userCheckins[0].timestamp);
+
+      const diffDays = Math.floor(
+        (today - lastCheckin) / (1000 * 60 * 60 * 24)
       );
+
+      console.log("User:", user.email, "Days:", diffDays);
+
+      if (diffDays >= user.timeoutDays) {
+
+        console.log("User overdue:", user.email);
+
+        await sendEmail(
+          user.emergencyEmail,
+          diffDays
+        );
+
+      }
+
     }
 
-  });
+  } catch (error) {
+
+    console.log("Check users error:", error);
+
+  }
+
 }
 
 /*
-========================
+====================================
 CRON JOB
-========================
+====================================
 */
 
 cron.schedule("*/1 * * * *", () => {
 
-  console.log("Running check...");
+  console.log("Running timeout check...");
 
   checkUsers();
 
 });
 
 /*
-========================
+====================================
 SERVER START
-========================
+====================================
 */
 
 const PORT = process.env.PORT || 4000;
