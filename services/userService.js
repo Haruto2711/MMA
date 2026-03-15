@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.7:3000/users";
+const API_URL = "http://192.168.1.34:3000/users";
 
 /*
 ========================
@@ -7,7 +7,6 @@ GET ALL USERS
 */
 export const getUsers = async () => {
   try {
-
     const response = await fetch(API_URL);
 
     if (!response.ok) {
@@ -15,13 +14,11 @@ export const getUsers = async () => {
     }
 
     return await response.json();
-
   } catch (error) {
     console.error("Get users error:", error.message);
     throw error;
   }
 };
-
 
 /*
 ========================
@@ -30,7 +27,6 @@ GET USER BY ID
 */
 export const getUserById = async (userId) => {
   try {
-
     const response = await fetch(`${API_URL}/${userId}`);
 
     if (!response.ok) {
@@ -38,13 +34,11 @@ export const getUserById = async (userId) => {
     }
 
     return await response.json();
-
   } catch (error) {
     console.error("Get user error:", error.message);
     throw error;
   }
 };
-
 
 /*
 ========================
@@ -53,13 +47,12 @@ UPDATE USER PROFILE
 */
 export const updateUser = async (userId, data) => {
   try {
-
     const response = await fetch(`${API_URL}/${userId}`, {
       method: "PATCH",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {
@@ -67,13 +60,11 @@ export const updateUser = async (userId, data) => {
     }
 
     return await response.json();
-
   } catch (error) {
     console.error("Update user error:", error.message);
     throw error;
   }
 };
-
 
 /*
 ========================
@@ -82,9 +73,8 @@ DELETE USER
 */
 export const deleteUser = async (userId) => {
   try {
-
     const response = await fetch(`${API_URL}/${userId}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
 
     if (!response.ok) {
@@ -92,7 +82,6 @@ export const deleteUser = async (userId) => {
     }
 
     return true;
-
   } catch (error) {
     console.error("Delete user error:", error.message);
     throw error;

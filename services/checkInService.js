@@ -1,10 +1,7 @@
 import { Platform } from "react-native";
 import { getToday } from "../utils/dateUtils";
 
-const API_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:3000"
-    : "http://192.168.1.7:3000";
+const API_URL = "http://192.168.1.34:3000";
 const CHECKIN_URL = `${API_URL}/checkins`;
 const USERS_URL = `${API_URL}/users`;
 
@@ -17,8 +14,11 @@ CREATE CHECKIN
 */
 export const createCheckin = async (userId) => {
   try {
+    // Luôn lưu userId là chuỗi
     const normalizedUserId = String(userId).trim();
+    const now = new Date();
     const today = getToday();
+    const timestamp = now.toISOString(); // Lưu timestamp đầy đủ ngày giờ
 
     const allCheckinsRes = await fetch(CHECKIN_URL);
     if (!allCheckinsRes.ok) {
@@ -26,14 +26,15 @@ export const createCheckin = async (userId) => {
     }
 
     const allCheckins = await allCheckinsRes.json();
+    // Kiểm tra đã check-in hôm nay (chỉ so sánh ngày, userId là chuỗi)
     const todayCheckins = allCheckins.filter(
-      (item) => isSameUserId(item.userId, normalizedUserId) && item.timestamp === today
+      (item) => String(item.userId) === normalizedUserId && item.timestamp.slice(0, 10) === today
     );
 
     if (todayCheckins.length > 0) {
       return {
-  message: "Already checked in today"
-};
+        message: "Already checked in today"
+      };
     }
 
     const maxNumericId = allCheckins.reduce((maxId, item) => {
@@ -50,10 +51,8 @@ export const createCheckin = async (userId) => {
       },
       body: JSON.stringify({
         id: nextId,
-        userId: Number.isNaN(Number(normalizedUserId))
-          ? normalizedUserId
-          : Number(normalizedUserId),
-        timestamp: today,
+        userId: normalizedUserId, // luôn là chuỗi
+        timestamp: timestamp, // Lưu ISO string
       }),
     });
 

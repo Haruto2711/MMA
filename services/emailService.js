@@ -4,7 +4,7 @@ EMAIL SERVER CONFIG
 ====================================
 */
 
-const EMAIL_SERVER_URL = "http://192.168.1.7:4000/send-alert";
+const EMAIL_SERVER_URL = "http://192.168.1.34:3000/send-alert";
 
 /*
 ====================================
@@ -13,9 +13,7 @@ SEND ALERT EMAIL TO SERVER
 */
 
 export const sendAlertEmail = async (toEmail, days) => {
-
   try {
-
     if (!toEmail) {
       console.log("No emergency email provided");
       return;
@@ -28,12 +26,12 @@ export const sendAlertEmail = async (toEmail, days) => {
     const response = await fetch(EMAIL_SERVER_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         toEmail,
-        days
-      })
+        days,
+      }),
     });
 
     if (!response.ok) {
@@ -45,11 +43,7 @@ export const sendAlertEmail = async (toEmail, days) => {
     console.log("Email sent successfully:", data);
 
     return data;
-
   } catch (error) {
-
-    console.log("Send email error:", error);
-
+    console.log("Send email error:", error, error?.response, error?.message);
   }
-
 };
