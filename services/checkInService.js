@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import { getToday } from "../utils/dateUtils";
 
-const API_URL = "http://192.168.1.34:3000";
+const API_URL = "https://mma-db.onrender.com";
 const CHECKIN_URL = `${API_URL}/checkins`;
 const USERS_URL = `${API_URL}/users`;
 
@@ -14,11 +14,8 @@ CREATE CHECKIN
 */
 export const createCheckin = async (userId) => {
   try {
-    // Luôn lưu userId là chuỗi
     const normalizedUserId = String(userId).trim();
-    const now = new Date();
     const today = getToday();
-    const timestamp = now.toISOString(); // Lưu timestamp đầy đủ ngày giờ
 
     const allCheckinsRes = await fetch(CHECKIN_URL);
     if (!allCheckinsRes.ok) {
@@ -26,14 +23,14 @@ export const createCheckin = async (userId) => {
     }
 
     const allCheckins = await allCheckinsRes.json();
-    // Kiểm tra đã check-in hôm nay (chỉ so sánh ngày, userId là chuỗi)
     const todayCheckins = allCheckins.filter(
-      (item) => String(item.userId) === normalizedUserId && item.timestamp.slice(0, 10) === today
+      (item) =>
+        isSameUserId(item.userId, normalizedUserId) && item.timestamp === today,
     );
 
     if (todayCheckins.length > 0) {
       return {
-        message: "Already checked in today"
+        message: "Already checked in today",
       };
     }
 
@@ -51,8 +48,10 @@ export const createCheckin = async (userId) => {
       },
       body: JSON.stringify({
         id: nextId,
-        userId: normalizedUserId, // luôn là chuỗi
-        timestamp: timestamp, // Lưu ISO string
+        userId: Number.isNaN(Number(normalizedUserId))
+          ? normalizedUserId
+          : Number(normalizedUserId),
+        timestamp: today,
       }),
     });
 
@@ -105,10 +104,10 @@ export const getCheckinHistory = async (userId) => {
 
     const checkins = await res.json();
     const userCheckins = checkins.filter((item) =>
-      isSameUserId(item.userId, normalizedUserId)
+      isSameUserId(item.userId, normalizedUserId),
     );
     const uniqueByDay = Array.from(
-      new Map(userCheckins.map((item) => [item.timestamp, item])).values()
+      new Map(userCheckins.map((item) => [item.timestamp, item])).values(),
     );
 
     return uniqueByDay;
@@ -133,7 +132,7 @@ export const getLastCheckin = async (userId) => {
     }
 
     const sorted = [...history].sort((a, b) =>
-      b.timestamp.localeCompare(a.timestamp)
+      b.timestamp.localeCompare(a.timestamp),
     );
     return sorted[0].timestamp;
   } catch (error) {

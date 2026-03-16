@@ -57,6 +57,21 @@ const NotificationScreen = () => {
     fetchNotifications();
   }, [user]);
 
+  /* useEffect(() => {
+    Notifications.requestPermissionsAsync();
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Nhắc nhở Check-in",
+        body: "Bạn hãy vào app để check-in hôm nay nhé!",
+      },
+      trigger: {
+        hour: 7,
+        minute: 0,
+        repeats: true,
+      },
+    });
+  }, []); */
+
   const handleMarkAsRead = async (id) => {
     try {
       await markNotificationAsRead(id);
@@ -116,28 +131,21 @@ const NotificationScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.header}>Thông báo</Text>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>
-            Thời gian đăng nhập: <Text style={{fontWeight:'bold'}}>{loginTime || 'Không xác định'}</Text>
-          </Text>
-          <Text style={styles.infoText}>{checkinMsg}</Text>
-        </View>
+        {/* Bỏ infoBox, chỉ hiển thị danh sách thông báo */}
         {loading ? (
           <ActivityIndicator size="large" color="#4F8EF7" />
         ) : error ? (
           <Text style={styles.errorText}>{error}</Text>
+        ) : notifications.length === null ? (
+          <Text style={styles.emptyText}>Không có thông báo nào.</Text>
         ) : (
-          notifications.length === null ? (
-            <Text style={styles.emptyText}>Không có thông báo nào.</Text>
-          ) : (
-            <FlatList
-              data={notifications}
-              keyExtractor={(item) => item.id?.toString()}
-              renderItem={renderItem}
-              contentContainerStyle={{ paddingBottom: 20 }}
-              showsVerticalScrollIndicator={false}
-            />
-          )
+          <FlatList
+            data={notifications}
+            keyExtractor={(item) => item.id?.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}
+          />
         )}
       </View>
     </SafeAreaView>
@@ -147,16 +155,16 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#eaf0fa',
+    backgroundColor: "#eaf0fa",
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     marginTop: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -171,11 +179,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   infoBox: {
-    backgroundColor: '#eaf0fa',
+    backgroundColor: "#eaf0fa",
     borderRadius: 12,
     padding: 16,
     marginBottom: 18,
-    shadowColor: '#4F8EF7',
+    shadowColor: "#4F8EF7",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -183,7 +191,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 17,
-    color: '#222',
+    color: "#222",
     marginBottom: 6,
   },
   item: {
@@ -220,15 +228,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     fontSize: 16,
     marginTop: 20,
   },
   emptyText: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 40,
-    color: '#b0b0b0',
+    color: "#b0b0b0",
     fontSize: 16,
   },
 });

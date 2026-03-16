@@ -110,4 +110,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#eaf0fa',
   },
-});
+}); 
