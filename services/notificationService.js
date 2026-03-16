@@ -1,9 +1,26 @@
 import { Platform } from "react-native";
-const API_URL = "http://192.168.1.34:3000/notifications";
+const API_URL = "https://mma-db.onrender.com/notifications";
 
 //const API_URL = "http://10.0.2.2:3000/notifications";
 //const API_URL = "http://192.168.1.7:3000/notifications";
 // Lấy danh sách thông báo theo userId
+
+export const createNotification = async (data) => {
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Create notification failed");
+  }
+
+  return await response.json();
+};
+
 export const getNotificationsByUser = async (userId) => {
   try {
     const res = await fetch(`${API_URL}?userId=${userId}`);

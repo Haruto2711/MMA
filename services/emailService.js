@@ -4,7 +4,7 @@ EMAIL SERVER CONFIG
 ====================================
 */
 
-const EMAIL_SERVER_URL = "http://192.168.1.34:3000/send-alert";
+const EMAIL_SERVER_URL = "https://mma-email.onrender.com/send-alert";
 
 /*
 ====================================
@@ -18,10 +18,6 @@ export const sendAlertEmail = async (toEmail, days) => {
       console.log("No emergency email provided");
       return;
     }
-
-    console.log("Sending alert email...");
-    console.log("To:", toEmail);
-    console.log("Days:", days);
 
     const response = await fetch(EMAIL_SERVER_URL, {
       method: "POST",
@@ -40,10 +36,10 @@ export const sendAlertEmail = async (toEmail, days) => {
 
     const data = await response.json();
 
-    console.log("Email sent successfully:", data);
+    console.log("Email sent:", data);
 
     return data;
   } catch (error) {
-    console.log("Send email error:", error, error?.response, error?.message);
+    console.log("Send email error:", error);
   }
 };

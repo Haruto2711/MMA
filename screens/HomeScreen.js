@@ -46,14 +46,12 @@ const HomeScreen = () => {
   }, [loadData]);
 
   useEffect(() => {
-    const today = getToday();
-
+    const todayDate = getToday().slice(0, 10);
     if (!lastCheckin) {
       setStatusMessage("Bạn chưa check-in hôm nay");
       return;
     }
-
-    if (lastCheckin.slice(0, 10) === today) {
+    if (lastCheckin.slice(0, 10) === todayDate) {
       setStatusMessage("Bạn đã check-in ngày hôm nay");
     } else {
       setStatusMessage("Bạn chưa check-in hôm nay");
