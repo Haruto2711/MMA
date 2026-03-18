@@ -201,8 +201,9 @@ cron.schedule("*/5 * * * *", () => {
   checkUsers();
 });
 
-// Check-in reminder email (daily at 00:05)
-cron.schedule("5 0 * * *", async () => {
+// Hourly check-in reminder: every hour from 7 AM to 11 PM
+// Sends email + push notification to users who haven't checked in today
+cron.schedule("0 7-23 * * *", async () => {
   try {
     const usersRes = await fetch(`${API_URL}/users`);
     const checkinsRes = await fetch(`${API_URL}/checkins`);
@@ -212,8 +213,9 @@ cron.schedule("5 0 * * *", async () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const hour = new Date().getHours();
+
     for (const user of users) {
-      // Lấy checkin gần nhất của user
       const userCheckins = checkins
         .filter((c) => c.userId == user.id)
         .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
@@ -230,13 +232,14 @@ cron.schedule("5 0 * * *", async () => {
           user.email,
           user.expoPushToken,
           "Nhắc nhở check-in",
-          "Bạn chưa check-in hôm nay. Hãy mở ứng dụng Are You Ok và check-in để đảm bảo an toàn."
+          `Bạn chưa check-in hôm nay (${hour}:00). Hãy mở ứng dụng Are You Ok và check-in để đảm bảo an toàn.`
         );
+        console.log(`[${hour}:00] Hourly reminder sent to:`, user.email);
       }
     }
-    console.log("Daily check-in reminder emails sent at 00:05.");
+    console.log(`Hourly check-in reminder done at ${hour}:00.`);
   } catch (error) {
-    console.log("Daily reminder error:", error);
+    console.log("Hourly reminder error:", error);
   }
 });
 
