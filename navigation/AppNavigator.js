@@ -11,6 +11,8 @@ import HistoryScreen from "../screens/HistoryScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import SettingScreen from "../screens/SettingScreen";
+import NotesScreen from "../screens/NotesScreen";
+import NoteDetailScreen from "../screens/NoteDetailScreen";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -26,6 +28,8 @@ export default function AppNavigator() {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="Setting" component={SettingScreen} />
+      <Stack.Screen name="Notes" component={NotesScreen} />
+      <Stack.Screen name="NoteDetail" component={NoteDetailScreen} />
     </Stack.Navigator>
   ) : (
     <Stack.Navigator initialRouteName="Login">
