@@ -1,9 +1,14 @@
 import { Platform } from "react-native";
-const API_URL = "https://mma-db.onrender.com/notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const API_URL = "http://192.168.1.34:3000/notifications";
 
 //const API_URL = "http://10.0.2.2:3000/notifications";
 //const API_URL = "http://192.168.1.7:3000/notifications";
 // Lấy danh sách thông báo theo userId
+
+const getNotificationsStorageKey = (userId) =>
+  `notifications_${String(userId)}`;
 
 export const createNotification = async (data) => {
   const response = await fetch(API_URL, {
@@ -25,15 +30,34 @@ export const getNotificationsByUser = async (userId) => {
   try {
     const res = await fetch(`${API_URL}?userId=${userId}`);
     if (!res.ok) throw new Error("Cannot fetch notifications");
-    return await res.json();
+    const data = await res.json();
+    
+    // Lưu vào AsyncStorage
+    const storageKey = getNotificationsStorageKey(userId);
+    await AsyncStorage.setItem(storageKey, JSON.stringify(data));
+    
+    return data;
   } catch (error) {
     console.error("Get notifications error:", error.message);
+    
+    // Nếu lỗi, load từ AsyncStorage
+    try {
+      const storageKey = getNotificationsStorageKey(userId);
+      const cachedData = await AsyncStorage.getItem(storageKey);
+      if (cachedData) {
+        console.log("Loading notifications from cache");
+        return JSON.parse(cachedData);
+      }
+    } catch (cacheError) {
+      console.error("Cache error:", cacheError.message);
+    }
+    
     throw error;
   }
 };
 
 // Đánh dấu đã đọc thông báo
-export const markNotificationAsRead = async (notificationId) => {
+export const markNotificationAsRead = async (notificationId, userId) => {
   try {
     const res = await fetch(`${API_URL}/${notificationId}`, {
       method: "PATCH",
@@ -41,7 +65,22 @@ export const markNotificationAsRead = async (notificationId) => {
       body: JSON.stringify({ read: true }),
     });
     if (!res.ok) throw new Error("Cannot update notification");
-    return await res.json();
+    const updatedNotification = await res.json();
+    
+    // Cập nhật cache
+    if (userId) {
+      const storageKey = getNotificationsStorageKey(userId);
+      const cachedData = await AsyncStorage.getItem(storageKey);
+      if (cachedData) {
+        const notifications = JSON.parse(cachedData);
+        const updatedNotifications = notifications.map((notif) =>
+          notif.id === notificationId ? { ...notif, read: true } : notif
+        );
+        await AsyncStorage.setItem(storageKey, JSON.stringify(updatedNotifications));
+      }
+    }
+    
+    return updatedNotification;
   } catch (error) {
     console.error("Update notification error:", error.message);
     throw error;

@@ -6,18 +6,24 @@ import {
   View,
   StyleSheet,
   SafeAreaView,
+  Image,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 
 import { createCheckin, getLastCheckin } from "../services/checkInService";
 import { getToday } from "../utils/dateUtils";
 import { checkUserTimeout } from "../services/notificationService";
+import { checkNotCheckedInToday, syncReminderByCheckin } from "../services/reminderService";
+import { setupPushToken } from "../services/pushTokenService";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const userId = user?.id;
 
@@ -41,17 +47,49 @@ const HomeScreen = () => {
     }
   }, [userId]);
 
+  // Setup push token when user logs in
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (userId) {
+      setupPushToken(userId);
+      loadData();
+    }
+  }, [userId]);
+
+  // Reload data khi màn hình được focus
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) {
+        // Refetch data khi screen được focus lại
+        (async () => {
+          try {
+            setLoading(true);
+            const last = await getLastCheckin(userId);
+            setLastCheckin(last || null);
+          } catch (error) {
+            console.error("Refetch error:", error);
+            setLastCheckin(null);
+          } finally {
+            setLoading(false);
+          }
+        })();
+      }
+    }, [userId])
+  );
 
   useEffect(() => {
     const todayDate = getToday().slice(0, 10);
+    console.log('DEBUG: lastCheckin =', lastCheckin);
+    console.log('DEBUG: todayDate =', todayDate);
+    
     if (!lastCheckin) {
       setStatusMessage("Bạn chưa check-in hôm nay");
       return;
     }
-    if (lastCheckin.slice(0, 10) === todayDate) {
+    const checkinDate = lastCheckin.slice(0, 10);
+    console.log('DEBUG: checkinDate =', checkinDate);
+    console.log('DEBUG: match =', checkinDate === todayDate);
+    
+    if (checkinDate === todayDate) {
       setStatusMessage("Bạn đã check-in ngày hôm nay");
     } else {
       setStatusMessage("Bạn chưa check-in hôm nay");
@@ -63,15 +101,31 @@ const HomeScreen = () => {
     }
   }, [user]);
 
+  // Check if user hasn't checked in today and show reminder
+  useEffect(() => {
+    syncReminderByCheckin(lastCheckin);
+    checkNotCheckedInToday(lastCheckin);
+  }, [lastCheckin]);
+
   const handleCheckin = async () => {
     if (!userId) return;
     try {
+      console.log("🔵 Starting check-in for user:", userId);
       const result = await createCheckin(userId);
+      console.log("✅ Check-in result:", result);
+      
       const today = getToday();
+      console.log("📅 Today date:", today);
       setLastCheckin(today);
       setStatusMessage("Bạn đã check-in ngày hôm nay");
-      // Không gọi loadData lại ngay để tránh bị backend trả về dữ liệu cũ
+      
+      // Reload data sau 1 giây để đảm bảo backend đã lưu
+      setTimeout(() => {
+        console.log("🔄 Reloading data after check-in...");
+        loadData();
+      }, 1000);
     } catch (error) {
+      console.error("❌ Check-in error:", error);
       setStatusMessage("Check-in thất bại. Vui lòng thử lại.");
     }
   };
@@ -85,20 +139,24 @@ const HomeScreen = () => {
             style={styles.iconButton}
             onPress={() => navigation.navigate("Setting")}
           >
-            <Text style={styles.iconText}>⚙️</Text>
+            <Ionicons name="settings-outline" size={26} color="#4F8EF7" />
           </TouchableOpacity>
           <View style={{ flex: 1 }} />
           <TouchableOpacity
             style={styles.iconButton}
             onPress={() => navigation.navigate("Notification")}
           >
-            <Text style={styles.iconText}>🔔</Text>
+            <Ionicons name="notifications-outline" size={26} color="#4F8EF7" />
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.iconButton}
+            style={[styles.iconButton, styles.profileIconButton]}
             onPress={() => navigation.navigate("Profile")}
           >
-            <Text style={styles.iconText}>👤</Text>
+            {user?.avatarUri ? (
+              <Image source={{ uri: user.avatarUri }} style={styles.profileAvatar} />
+            ) : (
+              <Ionicons name="person-outline" size={26} color="#4F8EF7" />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -124,13 +182,32 @@ const HomeScreen = () => {
           <Text style={styles.statusText}>{statusMessage}</Text>
         </View>
 
-        {/* HISTORY */}
-        <TouchableOpacity
-          style={styles.historyButton}
-          onPress={() => navigation.navigate("History")}
+        {/* HISTORY & NOTES BUTTONS */}
+        <View
+          style={[
+            styles.buttonRow,
+            { marginBottom: Math.max(insets.bottom, 8) + 8 },
+          ]}
         >
-          <Text style={styles.historyButtonText}>Lịch sử Check-in</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.historyButton}
+            onPress={() => navigation.navigate("History")}
+          >
+            <View style={styles.buttonContent}>
+              <Ionicons name="bar-chart-outline" size={20} color="#fff" />
+              <Text style={styles.buttonRowText}>Lịch sử</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.notesButton}
+            onPress={() => navigation.navigate("Notes")}
+          >
+            <View style={styles.buttonContent}>
+              <Ionicons name="document-text-outline" size={20} color="#fff" />
+              <Text style={styles.buttonRowText}>Ghi chú</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -177,12 +254,18 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 1,
   },
-  iconText: {
-    fontSize: 26,
-    color: "#4F8EF7",
-    fontWeight: "bold",
+  profileIconButton: {
+    width: 44,
+    height: 44,
+    padding: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   },
-
+  profileAvatar: {
+    width: "100%",
+    height: "100%",
+  },
   title: {
     marginTop: 20,
     textAlign: "center",
@@ -245,15 +328,13 @@ const styles = StyleSheet.create({
   },
 
   historyButton: {
-    alignSelf: "center",
-    width: "82%",
+    flex: 1,
     height: 56,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#4F8EF7",
-    marginTop: 10,
-    marginBottom: 8,
+    marginRight: 8,
     shadowColor: "#4F8EF7",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -261,11 +342,38 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
 
-  historyButtonText: {
-    fontSize: 22,
+  notesButton: {
+    flex: 1,
+    height: 56,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#10B981",
+    marginLeft: 8,
+    shadowColor: "#10B981",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+
+  buttonRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 15,
+    marginBottom: 16,
+  },
+
+  buttonRowText: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#fff",
     letterSpacing: 0.5,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 
   logoutButton: {

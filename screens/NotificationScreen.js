@@ -74,7 +74,7 @@ const NotificationScreen = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      await markNotificationAsRead(id);
+      await markNotificationAsRead(id, user?.id);
       setNotifications((prev) =>
         prev.map((item) => (item.id === id ? { ...item, read: true } : item)),
       );
