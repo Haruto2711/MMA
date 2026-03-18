@@ -30,7 +30,7 @@ const ensureNotificationChannel = async () => {
   });
 };
 
-const CHECKIN_REMINDER_TYPES = ["checkin_reminder", "checkin_urgent"];
+const CHECKIN_REMINDER_TYPES = ["checkin_reminder", "checkin_urgent", "checkin_hourly"];
 
 const cancelCheckinScheduledNotifications = async () => {
   const scheduledNotifications =
@@ -52,42 +52,44 @@ const cancelCheckinScheduledNotifications = async () => {
 
 /*
 ====================================
-DAILY CHECK-IN REMINDER
+HOURLY CHECK-IN REMINDER (7 AM – 11 PM)
 ====================================
 */
 
-export const scheduleDailyReminder = async () => {
+export const scheduleHourlyReminders = async () => {
   try {
     await ensureNotificationChannel();
 
-    // Hủy reminder check-in cũ nếu có để tránh duplicate.
-    await cancelCheckinScheduledNotifications();
-
-    // Schedule reminder cố định lúc 00:05 mỗi ngày.
-    const reminderId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "⏰ Nhắc nhở Check-in",
-        body: "Hãy check-in ngay để cập nhật trạng thái của bạn!",
-        data: {
-          type: "checkin_reminder",
-        },
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: 0,
-        minute: 5,
-      },
-    });
-
-    const scheduledNotifications =
-      await Notifications.getAllScheduledNotificationsAsync();
-    const scheduledReminder = scheduledNotifications.find(
-      (item) => item.identifier === reminderId,
+    // Cancel existing hourly reminders to avoid duplicates
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    const hourlyOnes = scheduled.filter(
+      (item) => item?.content?.data?.type === "checkin_hourly",
+    );
+    await Promise.all(
+      hourlyOnes.map((item) =>
+        Notifications.cancelScheduledNotificationAsync(item.identifier),
+      ),
     );
 
-    console.log("Daily reminder scheduled at 00:05", scheduledReminder?.trigger);
+    // Schedule one daily notification per hour from 7 to 23
+    for (let hour = 7; hour <= 23; hour++) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "⏰ Nhắc nhở Check-in",
+          body: `Đã ${hour}:00 rồi! Bạn chưa check-in hôm nay. Hãy mở ứng dụng Are You Ok và check-in ngay.`,
+          data: { type: "checkin_hourly", hour },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
+          hour,
+          minute: 0,
+        },
+      });
+    }
+
+    console.log("Hourly reminders scheduled from 7:00 to 23:00.");
   } catch (error) {
-    console.error("Schedule reminder error:", error);
+    console.error("Schedule hourly reminders error:", error);
   }
 };
 
@@ -105,12 +107,14 @@ export const syncReminderByCheckin = async (lastCheckin) => {
 
     const scheduledNotifications =
       await Notifications.getAllScheduledNotificationsAsync();
-    const hasDailyReminder = scheduledNotifications.some(
-      (item) => item?.content?.data?.type === "checkin_reminder",
+
+    // Schedule hourly reminders from 7 AM if not already set
+    const hasHourlyReminder = scheduledNotifications.some(
+      (item) => item?.content?.data?.type === "checkin_hourly",
     );
 
-    if (!hasDailyReminder) {
-      await scheduleDailyReminder();
+    if (!hasHourlyReminder) {
+      await scheduleHourlyReminders();
     }
   } catch (error) {
     console.error("Sync reminder by checkin error:", error);
@@ -242,7 +246,6 @@ export const setupNotificationResponseListener = (navigation) => {
 };
 
 export default {
-  scheduleDailyReminder,
   syncReminderByCheckin,
   requestNotificationPermission,
   sendWelcomeNotification,

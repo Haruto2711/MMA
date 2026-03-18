@@ -63,7 +63,7 @@
       "password": "123456",
       "emergencyEmail": "lolaugus8@gmail.com",
       "timeoutDays": 3,
-      "lastCheckin": "2026-03-18 22:51",
+      "lastCheckin": "2026-03-19 01:38",
       "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
     },
     {
@@ -127,7 +127,7 @@
       "password": "123456",
       "emergencyEmail": "kuntruck65@gmail.com",
       "timeoutDays": 3,
-      "lastCheckin": "2026-03-18 23:51",
+      "lastCheckin": "2026-03-19 01:40",
       "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
     },
     {
@@ -154,7 +154,7 @@
       "password": "123456",
       "emergencyEmail": "11a1.thanhmb.thpt@gmail.com",
       "timeoutDays": 3,
-      "lastCheckin": "2026-03-18 23:57",
+      "lastCheckin": "2026-03-19 01:44",
       "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
     },
     {
@@ -229,6 +229,15 @@
       "emergencyEmail": "minhthanhbui2003@gmail.com",
       "timeoutDays": 3,
       "lastCheckin": "2026-03-19 01:29",
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "861a",
+      "email": "kim3@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "kik370876@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": "2026-03-19 02:00",
       "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
     }
   ],
@@ -467,6 +476,26 @@
       "id": "47",
       "userId": "f95d",
       "timestamp": "2026-03-19 01:29"
+    },
+    {
+      "id": "48",
+      "userId": "12eb",
+      "timestamp": "2026-03-19 01:38"
+    },
+    {
+      "id": "49",
+      "userId": "1c41",
+      "timestamp": "2026-03-19 01:40"
+    },
+    {
+      "id": "50",
+      "userId": "03cb",
+      "timestamp": "2026-03-19 01:44"
+    },
+    {
+      "id": "51",
+      "userId": "861a",
+      "timestamp": "2026-03-19 02:00"
     }
   ],
   "notifications": [
@@ -572,7 +601,7 @@
       "type": "info",
       "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
       "sentAt": "2026-03-18",
-      "read": false
+      "read": true
     },
     {
       "id": "aa08",
@@ -596,7 +625,7 @@
       "type": "info",
       "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
       "sentAt": "2026-03-18",
-      "read": false
+      "read": true
     },
     {
       "id": "99d7",
@@ -661,6 +690,14 @@
       "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
       "sentAt": "2026-03-18",
       "read": true
+    },
+    {
+      "id": "c812",
+      "userId": "861a",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-18",
+      "read": false
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
