@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as authService from "../services/authService";
+import { sendWelcomeNotification } from "../services/reminderService";
+import { getLastCheckin } from "../services/checkInService";
+import { getToday } from "../utils/dateUtils";
+import { sendCheckinReminderEmail } from "../services/emailService";
 
 /*
 ========================
@@ -58,6 +62,21 @@ export const AuthProvider = ({ children }) => {
       setLoginTime(now);
       await AsyncStorage.setItem('user', JSON.stringify(data));
       await AsyncStorage.setItem('loginTime', now);
+
+      // Auto-send reminder email on login if user has not checked in today.
+      try {
+        const lastCheckin = await getLastCheckin(data.id);
+        const todayDate = getToday().slice(0, 10);
+        const hasCheckedInToday =
+          !!lastCheckin && lastCheckin.slice(0, 10) === todayDate;
+
+        if (!hasCheckedInToday) {
+          await sendCheckinReminderEmail(data.email);
+        }
+      } catch (reminderError) {
+        console.log("Login reminder email error:", reminderError);
+      }
+
       return data;
     } catch (error) {
       throw error;
@@ -83,6 +102,7 @@ export const AuthProvider = ({ children }) => {
       setLoginTime(now);
       await AsyncStorage.setItem('user', JSON.stringify(data));
       await AsyncStorage.setItem('loginTime', now);
+      await sendWelcomeNotification();
       return data;
     } catch (error) {
       throw error;

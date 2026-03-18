@@ -9,10 +9,12 @@ import {
   TextInput,
   SafeAreaView,
   ScrollView,
+  Image,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import * as userService from '../services/userService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as DocumentPicker from "expo-document-picker";
 
 
 export default function ProfileScreen() {
@@ -22,6 +24,30 @@ export default function ProfileScreen() {
   const [fieldToEdit, setFieldToEdit] = useState(null); // 'name', 'phone', 'emergencyEmail', 'alertDays'
   const [editValue, setEditValue] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const handlePickAvatar = async () => {
+    if (!user) return;
+
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "image/*",
+        copyToCacheDirectory: true,
+      });
+
+      if (result.canceled || !result.assets?.length) {
+        return;
+      }
+
+      const avatarUri = result.assets[0].uri;
+      await userService.updateUser(user.id, { avatarUri });
+      const freshUser = await userService.getUserById(user.id);
+      await AsyncStorage.setItem('user', JSON.stringify(freshUser));
+      setUser(freshUser);
+      Alert.alert('Thành công', 'Đã cập nhật ảnh đại diện!');
+    } catch (e) {
+      Alert.alert('Lỗi', 'Không thể cập nhật ảnh đại diện. Vui lòng thử lại.');
+    }
+  };
 
   // Helper: get field label
   const getLabel = (field) => {
@@ -75,11 +101,20 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.profileCard}>
           <View style={styles.avatarWrap}>
-            <View style={styles.avatarCircle}>
-              <Text style={styles.avatarText}>
-                {user?.name ? user.name.trim().split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'U'}
-              </Text>
-            </View>
+            <TouchableOpacity onPress={handlePickAvatar} activeOpacity={0.8}>
+              <View style={styles.avatarCircle}>
+                {user?.avatarUri ? (
+                  <Image source={{ uri: user.avatarUri }} style={styles.avatarImage} />
+                ) : (
+                  <Text style={styles.avatarText}>
+                    {user?.name ? user.name.trim().split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'U'}
+                  </Text>
+                )}
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handlePickAvatar}>
+              <Text style={styles.avatarChangeText}>Đổi ảnh đại diện</Text>
+            </TouchableOpacity>
           </View>
           <Text style={styles.headerTitle}>Hồ sơ của tôi</Text>
           <View style={styles.infoRow}>
@@ -169,12 +204,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.10,
     shadowRadius: 8,
     elevation: 4,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   avatarText: {
     fontSize: 38,
     fontWeight: 'bold',
     color: '#2563eb',
     letterSpacing: 1,
+  },
+  avatarChangeText: {
+    color: '#2563eb',
+    marginTop: 10,
+    fontSize: 14,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   headerTitle: {
     fontSize: 28,

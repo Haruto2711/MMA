@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View, TextInput, TouchableOpacity, Text, Alert, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useAuth } from "../context/AuthContext";
 
@@ -9,20 +9,59 @@ export default function RegisterScreen({ navigation }) {
   const [emergencyEmail, setEmergencyEmail] = useState("");
   const [timeoutDays, setTimeoutDays] = useState("3");
   const [loading, setLoading] = useState(false);
+  const submittingRef = useRef(false);
+
+  const isValidEmail = (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return emailRegex.test(value.trim());
+  };
 
   const handleRegister = async () => {
+    if (submittingRef.current) return;
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanEmergencyEmail = emergencyEmail.trim().toLowerCase();
+    const days = Number(timeoutDays);
+
+    if (!cleanEmail || !password.trim() || !cleanEmergencyEmail || !timeoutDays.trim()) {
+      Alert.alert("Lỗi", "Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+
+    if (!isValidEmail(cleanEmail)) {
+      Alert.alert("Lỗi", "Email đăng nhập không đúng định dạng");
+      return;
+    }
+
+    if (!isValidEmail(cleanEmergencyEmail)) {
+      Alert.alert("Lỗi", "Email người thân không đúng định dạng");
+      return;
+    }
+
+    if (cleanEmail === cleanEmergencyEmail) {
+      Alert.alert("Lỗi", "Email người thân không được trùng email đăng nhập");
+      return;
+    }
+
+    if (!Number.isInteger(days) || days < 1) {
+      Alert.alert("Lỗi", "Số ngày cảnh báo phải là số nguyên lớn hơn 0");
+      return;
+    }
+
     try {
+      submittingRef.current = true;
       setLoading(true);
       await register({
-        email,
-        password,
-        emergencyEmail,
-        timeoutDays: Number(timeoutDays),
+        email: cleanEmail,
+        password: password.trim(),
+        emergencyEmail: cleanEmergencyEmail,
+        timeoutDays: days,
       });
       Alert.alert("Đăng ký thành công");
     } catch (error) {
       Alert.alert(error.message);
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   };

@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import { getToday } from "../utils/dateUtils";
 
-const API_URL = "https://mma-db.onrender.com";
+const API_URL = "http://192.168.1.34:3000";
 const CHECKIN_URL = `${API_URL}/checkins`;
 const USERS_URL = `${API_URL}/users`;
 
@@ -17,18 +17,24 @@ export const createCheckin = async (userId) => {
     const normalizedUserId = String(userId).trim();
     const today = getToday();
 
+    console.log("📤 Sending check-in to:", CHECKIN_URL);
+    console.log("📊 UserId:", normalizedUserId, "Today:", today);
+
     const allCheckinsRes = await fetch(CHECKIN_URL);
     if (!allCheckinsRes.ok) {
       throw new Error("Cannot load existing checkins");
     }
 
     const allCheckins = await allCheckinsRes.json();
+    console.log("✓ All checkins:", allCheckins.length, "records");
+    
     const todayCheckins = allCheckins.filter(
       (item) =>
         isSameUserId(item.userId, normalizedUserId) && item.timestamp === today,
     );
 
     if (todayCheckins.length > 0) {
+      console.log("⚠️ Already checked in today");
       return {
         message: "Already checked in today",
       };
@@ -48,9 +54,7 @@ export const createCheckin = async (userId) => {
       },
       body: JSON.stringify({
         id: nextId,
-        userId: Number.isNaN(Number(normalizedUserId))
-          ? normalizedUserId
-          : Number(normalizedUserId),
+        userId: normalizedUserId, // Giữ userId là string, không convert
         timestamp: today,
       }),
     });
@@ -58,6 +62,9 @@ export const createCheckin = async (userId) => {
     if (!res.ok) {
       throw new Error("Checkin failed");
     }
+
+    const result = await res.json();
+    console.log("✅ Check-in saved:", result);
 
     // Try update user profile for compatibility with older screens.
     // Do not fail check-in if this route style is unsupported by json-server version.
@@ -81,9 +88,9 @@ export const createCheckin = async (userId) => {
       // ignore user patch failure
     }
 
-    return await res.json();
+    return result;
   } catch (error) {
-    console.error("Checkin error:", error.message);
+    console.error("❌ Checkin error:", error.message);
     throw error;
   }
 };
@@ -96,6 +103,8 @@ GET CHECKIN HISTORY
 export const getCheckinHistory = async (userId) => {
   try {
     const normalizedUserId = String(userId).trim();
+    console.log("📋 Fetching history from:", CHECKIN_URL);
+    
     const res = await fetch(CHECKIN_URL);
 
     if (!res.ok) {
@@ -103,16 +112,21 @@ export const getCheckinHistory = async (userId) => {
     }
 
     const checkins = await res.json();
+    console.log("📊 Total checkins in DB:", checkins.length);
+    
     const userCheckins = checkins.filter((item) =>
       isSameUserId(item.userId, normalizedUserId),
     );
+    console.log("👤 User checkins:", userCheckins.length, "for userId:", normalizedUserId);
+    
     const uniqueByDay = Array.from(
       new Map(userCheckins.map((item) => [item.timestamp, item])).values(),
     );
+    console.log("✓ Unique by day:", uniqueByDay.length);
 
     return uniqueByDay;
   } catch (error) {
-    console.error("History error:", error.message);
+    console.error("🔴 History error:", error.message);
     throw error;
   }
 };
@@ -125,18 +139,24 @@ GET LAST CHECKIN
 export const getLastCheckin = async (userId) => {
   try {
     const normalizedUserId = String(userId).trim();
+    console.log("🔍 Getting last check-in for user:", normalizedUserId);
+    
     const history = await getCheckinHistory(normalizedUserId);
+    console.log("📜 History length:", history.length);
 
     if (history.length === 0) {
+      console.log("⚠️ No check-in history found");
       return null;
     }
 
     const sorted = [...history].sort((a, b) =>
       b.timestamp.localeCompare(a.timestamp),
     );
-    return sorted[0].timestamp;
+    const lastTimestamp = sorted[0].timestamp;
+    console.log("✓ Last check-in timestamp:", lastTimestamp);
+    return lastTimestamp;
   } catch (error) {
-    console.error("Last checkin error:", error.message);
+    console.error("🔴 Last checkin error:", error.message);
     throw error;
   }
 };

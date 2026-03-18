@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, SafeAreaView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import HistoryItem from '../components/HistoryItem';
 import { getCheckinHistory } from '../services/checkInService';
 import { useAuth } from "../context/AuthContext";
@@ -29,6 +30,13 @@ export default function HistoryScreen() {
   useEffect(() => {
     loadHistory();
   }, [user]);
+
+  // Refetch history khi màn hình được focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadHistory();
+    }, [user?.id])
+  );
 
   if (loading) {
     return (
