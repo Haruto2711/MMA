@@ -4,6 +4,8 @@ EMAIL SERVER CONFIG
 ====================================
 */
 
+//const EMAIL_SERVER_URL = "http://10.33.56.150:4000/send-alert";
+
 const EMAIL_SERVER_URL = "http://192.168.1.34:4000/send-alert";
 
 /*

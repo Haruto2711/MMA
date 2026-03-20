@@ -1,3 +1,7 @@
+/* const BASE_URL = "http://10.33.56.150:3000/users";
+const NOTIFICATIONS_URL = "http://10.33.56.150:3000/notifications";
+const EMAIL_SERVER_URL = "http://10.33.56.150:4000/send-alert"; */
+
 const BASE_URL = "http://192.168.1.34:3000/users";
 const NOTIFICATIONS_URL = "http://192.168.1.34:3000/notifications";
 const EMAIL_SERVER_URL = "http://192.168.1.34:4000/send-alert";

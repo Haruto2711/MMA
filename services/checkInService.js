@@ -1,6 +1,8 @@
 import { Platform } from "react-native";
 import { getToday } from "../utils/dateUtils";
 
+//const API_URL = "http://10.33.56.150:3000";
+
 const API_URL = "http://192.168.1.34:3000";
 const CHECKIN_URL = `${API_URL}/checkins`;
 const USERS_URL = `${API_URL}/users`;

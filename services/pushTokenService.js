@@ -1,5 +1,7 @@
 import * as Notifications from "expo-notifications";
 
+//const API_URL = "http://10.33.56.150:3000";
+
 const API_URL = "http://192.168.1.34:3000";
 
 /*
