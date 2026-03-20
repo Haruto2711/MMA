@@ -4,6 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 
+const API_URL = "http://192.168.1.34:3000";
+const NOTES_URL = `${API_URL}/notes`;
+
 const getUserNotesKey = (userId) => `userNotes_${String(userId)}`;
 
 const NotesScreen = () => {
@@ -79,9 +82,15 @@ const NotesScreen = () => {
         {
           text: 'Xóa',
           style: 'destructive',
-          onPress: () => {
+          onPress: async () => {
             const newNotes = notes.filter(note => note.id !== noteId);
             saveNotes(newNotes);
+            // Sync deletion to backend
+            try {
+              await fetch(`${NOTES_URL}/${noteId}`, { method: 'DELETE' });
+            } catch (err) {
+              console.warn('Note delete sync failed (non-critical):', err);
+            }
           },
         },
       ]

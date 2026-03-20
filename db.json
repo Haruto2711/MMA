@@ -3,10 +3,11 @@
     {
       "id": "1",
       "email": "test@gmail.com",
-      "password": "12345",
+      "password": "123456",
       "emergencyEmail": "family@gmail.com",
       "timeoutDays": 3,
-      "lastCheckin": "2026-03-10"
+      "lastCheckin": "2026-03-10",
+      "expoPushToken": "ExponentPushToken[Ksq2-fGBNSdHMeqKMgR9Q_]"
     },
     {
       "id": "2",
@@ -37,7 +38,7 @@
       "id": "6b80",
       "email": "huy@gmail.com",
       "password": "123456",
-      "emergencyEmail": "ngochuyn029@gmail.com",
+      "emergencyEmail": "ngochuyn29@gmail.com",
       "timeoutDays": 2,
       "lastCheckin": null
     },
@@ -238,6 +239,104 @@
       "emergencyEmail": "kik370876@gmail.com",
       "timeoutDays": 3,
       "lastCheckin": "2026-03-19 02:00",
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "36e6",
+      "email": "david@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "device@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": null,
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "16f7",
+      "email": "b@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "c@gmail.com",
+      "timeoutDays": 2,
+      "lastCheckin": "2026-03-19 10:18",
+      "expoPushToken": "ExponentPushToken[Ksq2-fGBNSdHMeqKMgR9Q_]"
+    },
+    {
+      "id": "7a53",
+      "email": "c@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "dppp@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": "2026-03-19 10:31",
+      "expoPushToken": "ExponentPushToken[ymlYeXEWk6-rdSxt4R49ZW]"
+    },
+    {
+      "id": "a379",
+      "email": "minh@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "minh1@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": "2026-03-19 11:19",
+      "expoPushToken": "ExponentPushToken[ymlYeXEWk6-rdSxt4R49ZW]"
+    },
+    {
+      "id": "3797",
+      "email": "minh2@gmail.com",
+      "password": "12345",
+      "emergencyEmail": "phannvhe199993@fpt.edu.vn",
+      "timeoutDays": 3,
+      "lastCheckin": null
+    },
+    {
+      "id": "8a15",
+      "email": "minja@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "dothanhson1133@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": "2026-03-19 17:01",
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "deda",
+      "email": "dothanhson1133@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "huy@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": "2026-03-19 17:02",
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "e5c8",
+      "email": "kuntruck6@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "kuntruck65@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": null,
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "ab9f",
+      "email": "min12345@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "min12@gmail.com",
+      "timeoutDays": 3,
+      "lastCheckin": "2026-03-19 17:06",
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "12f1",
+      "email": "lolaugus2992@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "lolaugus8@gmail.com",
+      "timeoutDays": 6,
+      "lastCheckin": null,
+      "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
+    },
+    {
+      "id": "e0db",
+      "email": "kien2@gmail.com",
+      "password": "123456",
+      "emergencyEmail": "minhthanhbui2003@gmail.com",
+      "timeoutDays": 5,
+      "lastCheckin": null,
       "expoPushToken": "ExponentPushToken[Pj2-Q5LIQOY9LxqHaxM_ta]"
     }
   ],
@@ -496,6 +595,61 @@
       "id": "51",
       "userId": "861a",
       "timestamp": "2026-03-19 02:00"
+    },
+    {
+      "id": "52",
+      "userId": "1",
+      "timestamp": "2026-03-19 09:44"
+    },
+    {
+      "id": "53",
+      "userId": "1",
+      "timestamp": "2026-03-19 09:45"
+    },
+    {
+      "id": "54",
+      "userId": "1",
+      "timestamp": "2026-03-19 10:14"
+    },
+    {
+      "id": "55",
+      "userId": "16f7",
+      "timestamp": "2026-03-19 10:18"
+    },
+    {
+      "id": "56",
+      "userId": "7a53",
+      "timestamp": "2026-03-19 10:20"
+    },
+    {
+      "id": "57",
+      "userId": "7a53",
+      "timestamp": "2026-03-19 10:29"
+    },
+    {
+      "id": "58",
+      "userId": "7a53",
+      "timestamp": "2026-03-19 10:31"
+    },
+    {
+      "id": "59",
+      "userId": "a379",
+      "timestamp": "2026-03-19 11:19"
+    },
+    {
+      "id": "60",
+      "userId": "8a15",
+      "timestamp": "2026-03-19 17:01"
+    },
+    {
+      "id": "61",
+      "userId": "deda",
+      "timestamp": "2026-03-19 17:02"
+    },
+    {
+      "id": "62",
+      "userId": "ab9f",
+      "timestamp": "2026-03-19 17:06"
     }
   ],
   "notifications": [
@@ -698,6 +852,123 @@
       "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
       "sentAt": "2026-03-18",
       "read": false
+    },
+    {
+      "id": "e0a2",
+      "userId": "36e6",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-18",
+      "read": false
+    },
+    {
+      "id": "8d55",
+      "userId": "16f7",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": false
+    },
+    {
+      "id": "2ec2",
+      "userId": "7a53",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": true
+    },
+    {
+      "id": "740c",
+      "userId": "a379",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": true
+    },
+    {
+      "id": "4eff",
+      "userId": "3797",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": false
+    },
+    {
+      "id": "93e6",
+      "userId": "8a15",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": true
+    },
+    {
+      "id": "8180",
+      "userId": "deda",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": true
+    },
+    {
+      "id": "fc71",
+      "userId": "e5c8",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": false
+    },
+    {
+      "id": "7e1b",
+      "userId": "ab9f",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": false
+    },
+    {
+      "id": "0985",
+      "userId": "12f1",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": false
+    },
+    {
+      "id": "9f01",
+      "userId": "e0db",
+      "type": "info",
+      "message": "Chào mừng bạn đến với Are You Ok! Hãy nhớ check-in hàng ngày để đảm bảo an toàn",
+      "sentAt": "2026-03-19",
+      "read": true
+    }
+  ],
+  "notes": [
+    {
+      "id": "1773915608116",
+      "title": "Hi",
+      "content": "Hello",
+      "attachments": [],
+      "createdAt": "2026-03-19T10:20:08.116Z",
+      "updatedAt": "2026-03-19T10:20:08.116Z",
+      "userId": "12f1"
+    },
+    {
+      "id": "1773915797220",
+      "title": "Hi",
+      "content": "Hello",
+      "attachments": [],
+      "createdAt": "2026-03-19T10:23:17.220Z",
+      "updatedAt": "2026-03-19T10:23:17.220Z",
+      "userId": "e0db"
+    },
+    {
+      "id": "1774022094649",
+      "title": "Hi",
+      "content": "Hi",
+      "attachments": [],
+      "createdAt": "2026-03-20T15:54:54.649Z",
+      "updatedAt": "2026-03-20T15:54:54.649Z",
+      "userId": "12f1"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
