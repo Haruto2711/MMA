@@ -20,6 +20,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
+const API_URL = "http://192.168.1.34:3000";
+const NOTES_URL = `${API_URL}/notes`;
+
 const getUserNotesKey = (userId) => `userNotes_${String(userId)}`;
 
 const NoteDetailScreen = ({ route, navigation }) => {
@@ -86,6 +89,29 @@ const NoteDetailScreen = ({ route, navigation }) => {
       }
 
       await AsyncStorage.setItem(storageKey, JSON.stringify(newNotes));
+
+      // Sync note to backend so the server can include it in reminder emails
+      try {
+        const backendNote = { ...savedNote, userId: String(user.id) };
+        // Check if note already exists on backend
+        const existingRes = await fetch(`${NOTES_URL}/${noteId}`);
+        if (existingRes.ok) {
+          await fetch(`${NOTES_URL}/${noteId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(backendNote),
+          });
+        } else {
+          await fetch(NOTES_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(backendNote),
+          });
+        }
+      } catch (syncErr) {
+        console.warn('Note sync to backend failed (non-critical):', syncErr);
+      }
+
       navigation.goBack();
     } catch (error) {
       console.error('Error saving note detail:', error);

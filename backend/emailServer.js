@@ -7,6 +7,11 @@ const app = express();
 app.use(express.json());
 
 const EMERGENCY_ALERT_DAYS = 3;
+const NOTE_REMINDER_DAYS = 5;
+
+// Track last alert date per user to avoid re-sending multiple times per day
+// Key: userId, Value: "YYYY-MM-DD" date string of last sent alert
+const lastAlertSentDate = new Map();
 
 /*
 ====================================
@@ -14,6 +19,7 @@ DATABASE API
 ====================================
 */
 
+//const API_URL = "http://10.33.56.150:3000";
 const API_URL = "http://192.168.1.34:3000";
 
 /*
@@ -135,6 +141,62 @@ app.post("/send-alert", async (req, res) => {
 
 /*
 ====================================
+SEND USER NOTES EMAIL
+====================================
+*/
+
+async function sendUserNotesEmail(user, diffDays) {
+  try {
+    const notesRes = await fetch(`${API_URL}/notes?userId=${user.id}`);
+    if (!notesRes.ok) return;
+
+    const notes = await notesRes.json();
+
+    if (!notes || notes.length === 0) {
+      console.log("No notes found for user:", user.email);
+      return;
+    }
+
+    const sortedNotes = [...notes].sort((a, b) => {
+      const timeA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+      const timeB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+      return timeB - timeA;
+    });
+
+    const notesText = sortedNotes
+      .map((note, index) => {
+        const updatedAt = note.updatedAt || note.createdAt;
+        const formattedDate = updatedAt
+          ? new Date(updatedAt).toLocaleString("vi-VN")
+          : "Không rõ";
+        const noteContent = String(note.content || "").trim() || "(Trống)";
+        const noteTitle = String(note.title || "").trim() || "(Không có tiêu đề)";
+
+        return `--- Ghi chú ${index + 1} ---\nNgày: ${formattedDate}\nTiêu đề: ${noteTitle}\nNội dung: ${noteContent}`;
+      })
+      .join("\n\n");
+
+    const subject = `Ghi chú của ${user.email} - Chưa check-in ${diffDays} ngày`;
+    const message =
+      `Người dùng ${user.email} đã không check-in trong ${diffDays} ngày.\n\n` +
+      `Dưới đây là các ghi chú của họ:\n\n${notesText}`;
+
+    const mailOptions = {
+      from: "ngochuyn029@gmail.com",
+      to: user.emergencyEmail,
+      subject,
+      text: message,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Notes email sent to ${user.emergencyEmail} for user ${user.email}`);
+  } catch (error) {
+    console.error("sendUserNotesEmail error:", error);
+  }
+}
+
+/*
+====================================
 CHECK USERS TIMEOUT
 ====================================
 */
@@ -148,8 +210,14 @@ async function checkUsers() {
     const checkins = await checkinsRes.json();
 
     const today = new Date();
+    const todayStr = today.toISOString().slice(0, 10);
 
     for (const user of users) {
+      // Only send one alert per user per day
+      if (lastAlertSentDate.get(user.id) === todayStr) {
+        continue;
+      }
+
       const userCheckins = checkins
         .filter((c) => c.userId == user.id)
         .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
@@ -162,6 +230,7 @@ async function checkUsers() {
           "Cảnh báo khẩn cấp - Chưa check-in",
           "Người dùng chưa từng check-in. Vui lòng theo dõi ngay lập tức."
         );
+        lastAlertSentDate.set(user.id, todayStr);
         continue;
       }
 
@@ -173,7 +242,11 @@ async function checkUsers() {
 
       console.log("User:", user.email, "Days:", diffDays);
 
-      if (diffDays >= EMERGENCY_ALERT_DAYS) {
+      if (diffDays >= NOTE_REMINDER_DAYS) {
+        console.log("User overdue 5 days, sending notes:", user.email);
+        await sendUserNotesEmail(user, diffDays);
+        lastAlertSentDate.set(user.id, todayStr);
+      } else if (diffDays >= EMERGENCY_ALERT_DAYS) {
         console.log("User overdue:", user.email);
         await sendEmailAndNotification(
           user.emergencyEmail,
@@ -181,6 +254,7 @@ async function checkUsers() {
           "Cảnh báo khẩn cấp - Chưa check-in",
           `Người dùng đã không check-in trong ${diffDays} ngày. Vui lòng theo dõi ngay lập tức.`
         );
+        lastAlertSentDate.set(user.id, todayStr);
       }
     }
   } catch (error) {
@@ -201,8 +275,11 @@ cron.schedule("*/5 * * * *", () => {
   checkUsers();
 });
 
+// Track last hourly reminder date per user to avoid sending more than once per day
+const lastReminderSentDate = new Map();
+
 // Hourly check-in reminder: every hour from 7 AM to 11 PM
-// Sends email + push notification to users who haven't checked in today
+// Sends email + push notification to users who haven't checked in today (max once per user per day)
 cron.schedule("0 7-23 * * *", async () => {
   try {
     const usersRes = await fetch(`${API_URL}/users`);
@@ -212,10 +289,16 @@ cron.schedule("0 7-23 * * *", async () => {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().slice(0, 10);
 
     const hour = new Date().getHours();
 
     for (const user of users) {
+      // Only send one reminder email per user per day
+      if (lastReminderSentDate.get(user.id) === todayStr) {
+        continue;
+      }
+
       const userCheckins = checkins
         .filter((c) => c.userId == user.id)
         .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
@@ -234,6 +317,7 @@ cron.schedule("0 7-23 * * *", async () => {
           "Nhắc nhở check-in",
           `Bạn chưa check-in hôm nay (${hour}:00). Hãy mở ứng dụng Are You Ok và check-in để đảm bảo an toàn.`
         );
+        lastReminderSentDate.set(user.id, todayStr);
         console.log(`[${hour}:00] Hourly reminder sent to:`, user.email);
       }
     }

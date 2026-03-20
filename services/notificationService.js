@@ -1,10 +1,10 @@
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//const API_URL = "http://10.33.56.150:3000/notifications";
+
 const API_URL = "http://192.168.1.34:3000/notifications";
 
-//const API_URL = "http://10.0.2.2:3000/notifications";
-//const API_URL = "http://192.168.1.7:3000/notifications";
 // Lấy danh sách thông báo theo userId
 
 const getNotificationsStorageKey = (userId) =>
